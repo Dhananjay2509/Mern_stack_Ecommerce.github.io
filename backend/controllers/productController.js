@@ -1,6 +1,5 @@
-
-const getAllProducts=(req,res)=>{
-    res.status(200).json({message:"Route is working fine"})
-}
+const getAllProducts = (req, res) => {
+  res.status(200).json({ message: "Route is working fine" });
+};
 
 export default getAllProducts;
