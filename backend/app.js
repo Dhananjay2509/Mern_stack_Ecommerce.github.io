@@ -6,7 +6,6 @@ const app=express();
 app.use(express.json())
  
 //Route Imports
-
 app.use('/api/v1',product)
 
 export default app;
