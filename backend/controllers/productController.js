@@ -1,23 +1,43 @@
-import Product from "../models/productModel.js"
+import Product from "../models/productModel.js";
 
 //Create Product -- Admin
-const createProduct= async (req,res,next)=>{
-   const product = await Product.create(req.body);
-   res.status(201).json({
-    success:true,
-    product
-   })
-}
+const createProduct = async (req, res, next) => {
+  const product = await Product.create(req.body);
+  res.status(201).json({
+    success: true,
+    product,
+  });
+};
 
-//Get all products 
+//Get all products
 const getAllProducts = async (req, res) => {
-  const product= await Product.find();
+  const product = await Product.find();
   res.status(200).json({
-    success:true,
-    product
-   })
+    success: true,
+    product,
+  });
 };
 
 // Update product -- Admin
+const updateProduct = async (req, res) => {
+  let product = await Product.findById(req.params.id);
+  if (!product) {
+    return res.status(500).json({
+      success: false,
+      message: "Product not found",
+    });
+  }
 
-export { getAllProducts, createProduct};
+  product = await Product.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+    useFindAndModify: true,
+  });
+
+  res.status(200).json({
+    success:true,
+    product
+  })
+};
+
+export { getAllProducts, createProduct, updateProduct };
