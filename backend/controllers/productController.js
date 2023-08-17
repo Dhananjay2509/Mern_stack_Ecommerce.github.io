@@ -18,4 +18,6 @@ const getAllProducts = async (req, res) => {
    })
 };
 
+// Update product -- Admin
+
 export { getAllProducts, createProduct};
