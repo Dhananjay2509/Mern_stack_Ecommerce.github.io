@@ -1,6 +1,6 @@
 import Product from "../models/productModel.js"
 
-//Create Product
+//Create Product -- Admin
 const createProduct= async (req,res,next)=>{
    const product = await Product.create(req.body);
    res.status(201).json({
@@ -9,9 +9,13 @@ const createProduct= async (req,res,next)=>{
    })
 }
 
-
-const getAllProducts = (req, res) => {
-  res.status(200).json({ message: "Route is working fine" });
+//Get all products 
+const getAllProducts = async (req, res) => {
+  const product= await Product.find();
+  res.status(200).json({
+    success:true,
+    product
+   })
 };
 
 export { getAllProducts, createProduct};
