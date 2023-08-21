@@ -4,16 +4,16 @@ import catchAsyncError from "../middleware/catchAsyncError.js";
 import ApiFeatures from "../utils/apiFeatures.js";
 
 //Create Product -- Admin
-const createProduct = async (req, res, next) => {
+const createProduct = catchAsyncError(async (req, res, next) => {
   const product = await Product.create(req.body);
   res.status(201).json({
     success: true,
     product,
   });
-};
+});
 
 //Get all products
-const getAllProducts = async (req, res) => {
+const getAllProducts = catchAsyncError(async (req, res) => {
   const resultPerPage=5;
   const productCount= await Product.countDocuments()
 
@@ -26,10 +26,10 @@ const getAllProducts = async (req, res) => {
     products,
     productCount
   });
-};
+});
 
 //Get single product
-const getSingleProduct = async (req, res, next) => {
+const getSingleProduct = catchAsyncError(async (req, res, next) => {
   const product = await Product.findById(req.params.id);
 
   if (!product) {
@@ -40,10 +40,10 @@ const getSingleProduct = async (req, res, next) => {
     success: true,
     product,
   });
-};
+});
 
 // Update product -- Admin
-const updateProduct = async (req, res) => {
+const updateProduct = catchAsyncError(async (req, res) => {
   let product = await Product.findById(req.params.id);
   if (!product) {
     return next(new ErrorHandler("Product not found", 404));
@@ -58,10 +58,10 @@ const updateProduct = async (req, res) => {
     success: true,
     product,
   });
-};
+});
 
 //Delete Product --Admin
-const deleteProduct = async (req, res, next) => {
+const deleteProduct = catchAsyncError(async (req, res, next) => {
   const product = Product.findById(req.params.id);
 
   if (!product) {
@@ -74,7 +74,7 @@ const deleteProduct = async (req, res, next) => {
     success: true,
     message: "Product deleted Successfully",
   });
-};
+});
 
 export {
   getAllProducts,
