@@ -1,6 +1,6 @@
-import ErrorHandler from "../utils/errorhandler";
-import catchAsyncError from "../middleware/catchAsyncError";
-import User from "../models/userModel";
+import ErrorHandler from "../utils/errorhandler.js";
+import catchAsyncError from "../middleware/catchAsyncError.js";
+import User from "../models/userModel.js";
 
 const registerUser = catchAsyncError(async (req, res, next) => {
   const { name, password, email } = req.body;
@@ -20,3 +20,5 @@ const registerUser = catchAsyncError(async (req, res, next) => {
     user
   });
 });
+
+export default registerUser;
