@@ -5,6 +5,7 @@ import ApiFeatures from "../utils/apiFeatures.js";
 
 //Create Product -- Admin
 const createProduct = catchAsyncError(async (req, res, next) => {
+  req.body.user = req.user.id;
   const product = await Product.create(req.body);
   res.status(201).json({
     success: true,
@@ -13,18 +14,19 @@ const createProduct = catchAsyncError(async (req, res, next) => {
 });
 
 //Get all products
-const getAllProducts = catchAsyncError(async (req, res) => {
-  const resultPerPage=5;
-  const productCount= await Product.countDocuments()
+const getAllProducts = catchAsyncError(async (req, res, next) => {
+  const resultPerPage = 8;
+  const productCount = await Product.countDocuments();
 
   const apiFeature = new ApiFeatures(Product.find(), req.query)
     .search()
-    .filter().pagination(resultPerPage);
+    .filter()
+    .pagination(resultPerPage);
   const products = await apiFeature.query;
   res.status(200).json({
     success: true,
     products,
-    productCount
+    productCount,
   });
 });
 
