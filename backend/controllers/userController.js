@@ -171,7 +171,7 @@ const updateProfile = catchAsyncError(async (req, res, next) => {
     email: req.body.email,
   };
 
-  const user =await User.findByIdAndUpdate(req.user.id, newUserData, {
+  const user = await User.findByIdAndUpdate(req.user.id, newUserData, {
     new: true,
     runValidators: true,
     useFindAndModify: false,
@@ -179,9 +179,75 @@ const updateProfile = catchAsyncError(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    user
+    user,
   });
 });
+
+// Get All Users --Admin
+const getAllUsers = catchAsyncError(async (req, res, next) => {
+  const users = await User.find();
+  res.status(200).json({
+    success: true,
+    users,
+  });
+});
+
+//Get Single User --Admin
+const getSingleUser = catchAsyncError(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    return next(
+      new ErrorHandler(`User does not exist with Id ${req.params.id}`)
+    );
+  }
+
+  res.status(200).json({
+    success: true,
+    user,
+  });
+});
+
+//Update User Role - Admin
+const updateUserRole = catchAsyncError(async (req, res, next) => {
+  const newUserData = {
+    name: req.body.name,
+    email: req.body.email,
+    role: req.body.role,
+  };
+
+  const user = await User.findByIdAndUpdate(req.params.id, newUserData, {
+    new: true,
+    runValidators: true,
+    useFindAndModify: false,
+  });
+
+  res.status(200).json({
+    success: true,
+    user,
+  });
+});
+
+//Delete User - Admin
+const deleteUser = catchAsyncError(async (req, res, next) => {
+  const user = User.findById(req.params.id);
+
+  //We will remove cloudinary later
+
+  if (!user) {
+    return next(
+      new ErrorHandler(`User does not exist with ID ${req.params.id}`,400)
+    );
+  }
+
+  await user.findOneAndRemove();
+
+  res.status(200).json({
+    success: true,
+    message:"User deleted successfully"
+  });
+});
+
+
 
 export {
   registerUser,
@@ -192,4 +258,8 @@ export {
   getUserDetails,
   updatePassword,
   updateProfile,
+  getAllUsers,
+  getSingleUser,
+  updateUserRole,
+  deleteUser
 };
