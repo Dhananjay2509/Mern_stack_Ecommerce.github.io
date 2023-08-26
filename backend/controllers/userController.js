@@ -235,7 +235,7 @@ const deleteUser = catchAsyncError(async (req, res, next) => {
 
   if (!user) {
     return next(
-      new ErrorHandler(`User does not exist with ID ${req.params.id}`,400)
+      new ErrorHandler(`User does not exist with ID ${req.params.id}`, 400)
     );
   }
 
@@ -243,11 +243,9 @@ const deleteUser = catchAsyncError(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    message:"User deleted successfully"
+    message: "User deleted successfully",
   });
 });
-
-
 
 export {
   registerUser,
@@ -261,5 +259,5 @@ export {
   getAllUsers,
   getSingleUser,
   updateUserRole,
-  deleteUser
+  deleteUser,
 };
