@@ -39,7 +39,7 @@ export const getSingleOrder = catchAsyncError(async (req, res, next) => {
   );
 
   if (!order) {
-    return next(ErrorHandler("Order not found With Given Id", 404));
+    return next(new ErrorHandler("Order not found With Given Id", 404));
   }
   res.status(200).json({
     success: true,
@@ -81,8 +81,12 @@ export const UpdateOrder = catchAsyncError(async (req, res, next) => {
     return next(new ErrorHandler("You have already delivered this order", 400));
   }
 
-  order.orderItems.forEach(async (order) => {
-    await updateStock(order.product, order.quantity);
+  if (!order) {
+    return next(new ErrorHandler("Order not found With Given Id", 404));
+  }
+
+  order.orderItems.forEach(async (o) => {
+    await updateStock(o.product, o.quantity);
   });
 
   order.orderStatus = req.body.status;
@@ -100,7 +104,7 @@ export const UpdateOrder = catchAsyncError(async (req, res, next) => {
 
 async function updateStock(id, quantity) {
   const product = await Product.findById(id);
-  product.stock -= quantity;
+  product.Stock -= quantity;
   await product.save({ validateBeforeSave: false });
 }
 
