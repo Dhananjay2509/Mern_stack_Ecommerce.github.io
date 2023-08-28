@@ -25,10 +25,96 @@ export const newOrder = catchAsyncError(async (req, res, next) => {
     user: req.user._id,
   });
 
-
   res.status(201).json({
-    success:true,
-    order,          
-  })
+    success: true,
+    order,
+  });
 });
 
+//Get Single Order
+export const getSingleOrder = catchAsyncError(async (req, res, next) => {
+  const order = await Order.findById(req.params.id).populate(
+    "user",
+    "name email"
+  );
+
+  if (!order) {
+    return next(ErrorHandler("Order not found With Given Id", 404));
+  }
+  res.status(200).json({
+    success: true,
+    order,
+  });
+});
+
+//Get Logged In User Orders
+export const myOrders = catchAsyncError(async (req, res, next) => {
+  const orders = await Order.find({ user: req.user._id });
+
+  res.status(200).json({
+    success: true,
+    orders,
+  });
+});
+
+//Get All Orders -- Admin
+export const getAllOrders = catchAsyncError(async (req, res, next) => {
+  const orders = await Order.find();
+
+  let totalAmount = 0;
+  orders.forEach((order) => {
+    totalAmount += order.totalPrice;
+  });
+
+  res.status(200).json({
+    success: true,
+    totalAmount,
+    orders,
+  });
+});
+
+//Update Order status -- Admin
+export const UpdateOrder = catchAsyncError(async (req, res, next) => {
+  const order = await Order.findById(req.params.id);
+
+  if (order.orderStatus === "Delivered") {
+    return next(new ErrorHandler("You have already delivered this order", 400));
+  }
+
+  order.orderItems.forEach(async (order) => {
+    await updateStock(order.product, order.quantity);
+  });
+
+  order.orderStatus = req.body.status;
+
+  if (req.body.status === "Delivered") {
+    order.deliveredAt = Date.now();
+  }
+
+  await order.save({ validateBeforeSave: false });
+
+  res.status(200).json({
+    success: true,
+  });
+});
+
+async function updateStock(id, quantity) {
+  const product = await Product.findById(id);
+  product.stock -= quantity;
+  await product.save({ validateBeforeSave: false });
+}
+
+//Delete Order -- Admin
+export const deleteOrder = catchAsyncError(async (req, res, next) => {
+  const order =  Order.findById(req.params.id);
+
+  if (!order) {
+    return next(new ErrorHandler("Order not found With Given Id", 404));
+  }
+
+  await order.findOneAndRemove();
+
+  res.status(200).json({
+    success: true,
+  });
+});
