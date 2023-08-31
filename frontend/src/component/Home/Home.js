@@ -8,7 +8,7 @@ const product ={
     name:"Blue Tshirt",
     images:[{url:"https://i.ibb.co/DRST11n/1.webp"}],
     price:"₹3000",
-    _id:"abhishek",
+    _id:"product_img",
 }
 
 
