@@ -5,8 +5,9 @@ import Header from "./component/layout/Header/Header.js";
 import Footer from "./component/layout/Footer/Footer.js";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./component/Home/Home.js";
-import ProductDetails from "./component/Product/ProductDetails.jsx"
-import Products from "./component/Product/Product.js"
+import ProductDetails from "./component/Product/ProductDetails.jsx";
+import Products from "./component/Product/Products.js";
+import Search from "./component/Product/Search.js";
 
 function App() {
   React.useEffect(() => {
@@ -20,9 +21,11 @@ function App() {
     <Router>
       <Header />
       <Routes>
-        <Route exact path="/" key={Home} Component={Home} />
-        <Route exact path="/product/:id" key={ProductDetails} Component={ProductDetails} />
-        <Route exact path="/products" Component={Products}/>
+        <Route path="/" element={<Home />} />
+        <Route path="/product/:id" element={<ProductDetails />} />
+        <Route path="/products" element={<Products />} />
+        <Route path="/products/:keyword" element={<Products />} />
+        <Route path="/search" element={<Search />} />
       </Routes>
       <Footer />
     </Router>
