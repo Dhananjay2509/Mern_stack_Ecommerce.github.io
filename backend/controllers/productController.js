@@ -20,14 +20,18 @@ const getAllProducts = catchAsyncError(async (req, res, next) => {
 
   const apiFeature = new ApiFeatures(Product.find(), req.query)
     .search()
-    .filter()
-    .pagination(resultPerPage);
-  const products = await apiFeature.query;
+    .filter();
+
+  let products = await apiFeature.query;
+  let filteredProductsCount = products.length;
+  apiFeature.pagination(resultPerPage);
+  // products = await apiFeature.query;
   res.status(200).json({
     success: true,
     products,
     productsCount,
     resultPerPage,
+    filteredProductsCount,
   });
 });
 
@@ -81,11 +85,11 @@ const deleteProduct = catchAsyncError(async (req, res, next) => {
 
 //Create New Review OR Update the Review
 const createProductReview = catchAsyncError(async (req, res, next) => {
-  const { rating, comment, productId } = req.body;
+  const { ratings, comment, productId } = req.body;
   const review = {
     user: req.user._id,
     name: req.user.name,
-    rating: Number(rating),
+    ratings: Number(ratings),
     comment,
   };
 
@@ -96,7 +100,7 @@ const createProductReview = catchAsyncError(async (req, res, next) => {
 
   if (isReviewed) {
     product.reviews.forEach((rev) => {
-      if (rev.toString() === req.user._id.toString()) rev.rating = rating;
+      if (rev.toString() === req.user._id.toString()) rev.ratings = ratings;
       rev.comment = comment;
     });
   } else {
@@ -106,7 +110,7 @@ const createProductReview = catchAsyncError(async (req, res, next) => {
 
   let avg = 0;
   product.reviews.forEach((rev) => {
-    avg += rev.rating;
+    avg += rev.ratings;
   });
   product.ratings = avg / product.reviews.length;
 
@@ -131,7 +135,7 @@ const getSingleProductReviews = catchAsyncError(async (req, res, next) => {
 });
 
 //Delete Product Review
-const deleteProductReview = catchAsyncError(async (req, res, next) => { 
+const deleteProductReview = catchAsyncError(async (req, res, next) => {
   const product = await Product.findById(req.query.productId);
   if (!product) {
     return new ErrorHandler("Product not found", 404);
@@ -141,9 +145,9 @@ const deleteProductReview = catchAsyncError(async (req, res, next) => {
     (rev) => rev._id.toString() !== req.query.id.toString()
   );
 
-  let avg = 0; 
+  let avg = 0;
   reviews.forEach((rev) => {
-    avg += rev.rating;
+    avg += rev.ratings;
   });
   const ratings = avg / reviews.length;
 
@@ -176,5 +180,5 @@ export {
   getSingleProduct,
   createProductReview,
   getSingleProductReviews,
-  deleteProductReview
+  deleteProductReview,
 };

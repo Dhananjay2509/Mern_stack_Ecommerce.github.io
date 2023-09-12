@@ -4,8 +4,15 @@ import User from "../models/userModel.js";
 import sendToken from "../utils/jwtToken.js";
 import sendEmail from "../utils/sendEmail.js";
 import crypto from "crypto";
+import cloudinary from "cloudinary"
 
 const registerUser = catchAsyncError(async (req, res, next) => {
+  
+  const myCloud= await cloudinary.v2.uploader.upload(req.body.avatar,{
+    folder:"avatars",
+    width:150,
+    crop:"scale",
+  })
   const { name, password, email } = req.body;
 
   const user = await User.create({
@@ -13,8 +20,8 @@ const registerUser = catchAsyncError(async (req, res, next) => {
     email,
     password,
     avatar: {
-      public_id: "This is a sample id",
-      url: "profilePicUrl",
+      public_id: myCloud.public_id,
+      url:myCloud.secure_url,
     },
   });
 
